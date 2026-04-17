@@ -1,0 +1,8 @@
+User-Agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /private/
+
+Host: https://cyberventuresindonesia.com
+Sitemap: https://cyberventuresindonesia.com/sitemap.xml
