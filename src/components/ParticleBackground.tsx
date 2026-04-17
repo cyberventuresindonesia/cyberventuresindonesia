@@ -34,10 +34,6 @@ export default function ParticleBackground() {
     return particles;
   }, []);
 
-  // Store initParticles in ref for use in effects
-  const initParticlesRef = useRef(initParticles);
-  initParticlesRef.current = initParticles;
-
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
