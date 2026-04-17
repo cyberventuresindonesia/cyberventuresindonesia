@@ -1,7 +1,29 @@
 "use client";
 
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { ArrowRight, Shield, Lock, Eye } from "lucide-react";
+
+const fadeInUp = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.5 }
+};
+
+const staggerContainer = {
+  animate: {
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2
+    }
+  }
+};
+
+const scaleIn = {
+  initial: { opacity: 0, scale: 0.9 },
+  animate: { opacity: 1, scale: 1 },
+  transition: { duration: 0.4 }
+};
 
 export default function Hero() {
   return (
@@ -20,36 +42,76 @@ export default function Hero() {
       />
 
       {/* Glow Effects */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-accent-cyan/20 rounded-full blur-[128px]" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent-cobalt/20 rounded-full blur-[128px]" />
+      <motion.div 
+        className="absolute top-1/4 left-1/4 w-96 h-96 bg-accent-cyan/20 rounded-full blur-[128px]"
+        animate={{
+          scale: [1, 1.1, 1],
+          opacity: [0.2, 0.3, 0.2]
+        }}
+        transition={{
+          duration: 8,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      />
+      <motion.div 
+        className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent-cobalt/20 rounded-full blur-[128px]"
+        animate={{
+          scale: [1, 1.15, 1],
+          opacity: [0.2, 0.25, 0.2]
+        }}
+        transition={{
+          duration: 10,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 2
+        }}
+      />
 
       {/* Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+      <motion.div 
+        className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center"
+        variants={staggerContainer}
+        initial="initial"
+        animate="animate"
+      >
         {/* Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent-cyan/10 border border-accent-cyan/30 mb-8">
+        <motion.div 
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent-cyan/10 border border-accent-cyan/30 mb-8"
+          variants={fadeInUp}
+        >
           <Shield className="w-4 h-4 text-accent-cyan" />
           <span className="text-sm font-medium text-accent-cyan">
             ISO 27001 Certified
           </span>
-        </div>
+        </motion.div>
 
         {/* Headline */}
-        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6">
+        <motion.h1 
+          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6"
+          variants={fadeInUp}
+        >
           <span className="text-foreground">Advanced</span>{" "}
           <span className="text-gradient">Cybersecurity</span>
           <br />
           <span className="text-foreground">Solutions</span>
-        </h1>
+        </motion.h1>
 
         {/* Subheadline */}
-        <p className="max-w-2xl mx-auto text-lg sm:text-xl text-text-secondary mb-10 leading-relaxed">
+        <motion.p 
+          className="max-w-2xl mx-auto text-lg sm:text-xl text-text-secondary mb-10 leading-relaxed"
+          variants={fadeInUp}
+        >
           PT Cyber Ventures Indonesia delivers enterprise-grade security services 
           including penetration testing, vulnerability assessment, and managed SOC 
           operations for organizations across Indonesia.
-        </p>
+        </motion.p>
 
         {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+        <motion.div 
+          className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
+          variants={fadeInUp}
+        >
           <Link
             href="/contact"
             className="group inline-flex items-center gap-2 px-8 py-4 text-base font-semibold bg-accent-cyan text-background rounded-xl hover:bg-accent-cyan/90 transition-all duration-300 glow-cyan"
@@ -63,43 +125,70 @@ export default function Hero() {
           >
             Explore Services
           </Link>
-        </div>
+        </motion.div>
 
         {/* Trust Indicators */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-3xl mx-auto">
-          <div className="flex flex-col items-center p-6 rounded-2xl bg-bg-elevated border border-border-subtle">
+        <motion.div 
+          className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-3xl mx-auto"
+          variants={staggerContainer}
+        >
+          <motion.div 
+            className="flex flex-col items-center p-6 rounded-2xl bg-bg-elevated border border-border-subtle"
+            variants={scaleIn}
+            whileHover={{ y: -5, borderColor: "rgba(0, 255, 255, 0.3)" }}
+            transition={{ duration: 0.2 }}
+          >
             <div className="w-12 h-12 rounded-xl bg-accent-cyan/10 flex items-center justify-center mb-4">
               <Shield className="w-6 h-6 text-accent-cyan" />
             </div>
             <div className="text-2xl font-bold text-foreground mb-1">10+</div>
             <div className="text-sm text-text-tertiary">Years Experience</div>
-          </div>
+          </motion.div>
           
-          <div className="flex flex-col items-center p-6 rounded-2xl bg-bg-elevated border border-border-subtle">
+          <motion.div 
+            className="flex flex-col items-center p-6 rounded-2xl bg-bg-elevated border border-border-subtle"
+            variants={scaleIn}
+            whileHover={{ y: -5, borderColor: "rgba(0, 255, 255, 0.3)" }}
+            transition={{ duration: 0.2 }}
+          >
             <div className="w-12 h-12 rounded-xl bg-accent-cyan/10 flex items-center justify-center mb-4">
               <Lock className="w-6 h-6 text-accent-cyan" />
             </div>
             <div className="text-2xl font-bold text-foreground mb-1">500+</div>
             <div className="text-sm text-text-tertiary">Threats Blocked</div>
-          </div>
+          </motion.div>
           
-          <div className="flex flex-col items-center p-6 rounded-2xl bg-bg-elevated border border-border-subtle">
+          <motion.div 
+            className="flex flex-col items-center p-6 rounded-2xl bg-bg-elevated border border-border-subtle"
+            variants={scaleIn}
+            whileHover={{ y: -5, borderColor: "rgba(0, 255, 255, 0.3)" }}
+            transition={{ duration: 0.2 }}
+          >
             <div className="w-12 h-12 rounded-xl bg-accent-cyan/10 flex items-center justify-center mb-4">
               <Eye className="w-6 h-6 text-accent-cyan" />
             </div>
             <div className="text-2xl font-bold text-foreground mb-1">24/7</div>
             <div className="text-sm text-text-tertiary">Security Monitoring</div>
-          </div>
-        </div>
-      </div>
+          </motion.div>
+        </motion.div>
+      </motion.div>
 
       {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-text-muted">
+      <motion.div 
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-text-muted"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.5, duration: 0.5 }}
+      >
         <span className="text-xs tracking-wider uppercase">Scroll to explore</span>
         <div className="w-6 h-10 rounded-full border-2 border-border-default flex justify-center pt-2">
-          <div className="w-1 h-2 bg-accent-cyan rounded-full animate-bounce" />
+          <motion.div 
+            className="w-1 h-2 bg-accent-cyan rounded-full"
+            animate={{ y: [0, 8, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+          />
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }
