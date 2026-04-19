@@ -23,14 +23,5 @@
         }
       ]
     }
-  ],
-  "rewrites": [
-    {
-      "source": "/challenges/(.*)",
-      "destination": "/404.html"
-    }
-  ],
-  "env": {
-    "ENABLE_CHALLENGES": "false"
-  }
+  ]
 }

@@ -1,11 +1,11 @@
 import type { NextConfig } from "next";
 
 const isProduction = process.env.NODE_ENV === 'production';
-const enableChallenges = process.env.ENABLE_CHALLENGES === 'true';
 
 const nextConfig: NextConfig = {
-  // Hanya export static untuk production tanpa challenges
-  output: isProduction && !enableChallenges ? 'export' : undefined,
+  // Note: Static export disabled for Vercel (supports SSR)
+  // Use 'export' only for static hosting like GitHub Pages
+  // output: 'export',
   distDir: 'dist',
   
   images: {
