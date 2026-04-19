@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Shield, Mail, Phone, MapPin, ExternalLink, MessageCircle } from "lucide-react";
+import Image from "next/image";
+import { Mail, Phone, MapPin, ExternalLink, MessageCircle } from "lucide-react";
 
 const footerLinks = {
   services: [
@@ -30,9 +31,14 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
           {/* Brand Column */}
           <div className="lg:col-span-2">
-            <Link href="/" className="flex items-center gap-2 mb-6">
-              <div className="w-10 h-10 rounded-lg bg-accent-cyan/10 border border-accent-cyan/30 flex items-center justify-center">
-                <Shield className="w-6 h-6 text-accent-cyan" />
+            <Link href="/" className="flex items-center gap-3 mb-6">
+              <div className="relative w-12 h-12">
+                <Image
+                  src="/logo.png"
+                  alt="Cyber Ventures Indonesia"
+                  fill
+                  className="object-contain"
+                />
               </div>
               <div className="flex flex-col">
                 <span className="text-lg font-bold text-foreground tracking-tight">

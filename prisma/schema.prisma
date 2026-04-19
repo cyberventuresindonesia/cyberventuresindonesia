@@ -1,0 +1,174 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Admin/Users for authentication
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(ADMIN)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Role {
+  ADMIN
+  SUPER_ADMIN
+}
+
+// Candidate/Applicant data
+model Candidate {
+  id                String           @id @default(cuid())
+  fullName          String
+  email             String           @unique
+  phoneNumber       String
+  countryCode       String           @default("+62")
+  telegramUsername  String
+  position          String
+  yearsExperience   Int
+  coverLetter       String           @db.Text
+  cvFileName        String?
+  cvFileData        String?          @db.Text // Base64 encoded PDF
+  cvSummary         String?          @db.Text
+  
+  // Status tracking
+  currentGate       Int              @default(1)
+  status            CandidateStatus  @default(IN_PROGRESS)
+  
+  // Relations
+  quizResult        QuizResult?
+  challengeProgress   ChallengeProgress?
+  liveDefense       LiveDefenseSchedule?
+  emails            SentEmail[]
+  
+  // Timestamps
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  
+  @@index([email])
+  @@index([status])
+  @@index([currentGate])
+}
+
+enum CandidateStatus {
+  IN_PROGRESS
+  QUIZ_PASSED
+  CHALLENGES_PASSED
+  LIVE_DEFENSE_SCHEDULED
+  COMPLETED
+  REJECTED
+}
+
+// Quiz results
+model QuizResult {
+  id            String    @id @default(cuid())
+  candidate     Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  candidateId   String    @unique
+  
+  score         Int
+  total         Int       @default(15)
+  percentage    Int
+  passed        Boolean   @default(false)
+  answers       Json?     // Store all answers for review
+  timeSpent     Int?      // Time in seconds
+  
+  createdAt     DateTime  @default(now())
+  
+  @@index([candidateId])
+}
+
+// Challenge progress
+model ChallengeProgress {
+  id              String    @id @default(cuid())
+  candidate       Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  candidateId     String    @unique
+  
+  solved          Json      // Array of challenge indices [0, 1, 2]
+  totalScore      Int       @default(0)
+  flags           Json?     // {flag1: "value", flag2: "value"}
+  attempts        Int       @default(0)
+  
+  updatedAt       DateTime  @updatedAt
+  
+  @@index([candidateId])
+}
+
+// Live Defense scheduling
+model LiveDefenseSchedule {
+  id              String    @id @default(cuid())
+  candidate       Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  candidateId     String    @unique
+  
+  preferredDate   String
+  preferredTime   String
+  timezone        String    @default("WIB")
+  notes           String?   @db.Text
+  
+  // Meeting details
+  googleMeetLink  String?
+  siemCredentials Json?     // {username: "", password: ""}
+  
+  // Status
+  status          String    @default("SCHEDULED") // SCHEDULED, COMPLETED, CANCELLED
+  evaluationScore Int?
+  evaluatorNotes  String?   @db.Text
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@index([candidateId])
+  @@index([preferredDate])
+}
+
+// Email automation log
+model SentEmail {
+  id                String    @id @default(cuid())
+  candidate         Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  candidateId       String
+  
+  type              EmailType
+  subject           String
+  content           String    @db.Text
+  to                String
+  
+  // Status
+  status            String    @default("QUEUED") // QUEUED, SENT, FAILED
+  errorMessage      String?
+  
+  // Metadata
+  sentAt            DateTime?
+  createdAt         DateTime  @default(now())
+  
+  @@index([candidateId])
+  @@index([type])
+}
+
+enum EmailType {
+  APPLICATION_RECEIVED
+  QUIZ_REMINDER
+  QUIZ_COMPLETED
+  CHALLENGES_REMINDER
+  LIVE_DEFENSE_SCHEDULED
+  LIVE_DEFENSE_REMINDER
+  EVALUATION_COMPLETE
+  REJECTION
+  OFFER
+}
+
+// System settings
+model Setting {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       String   @db.Text
+  description String?
+  updatedAt   DateTime @updatedAt
+}

@@ -2,7 +2,8 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { AlertTriangle, Home, RefreshCw, Shield } from "lucide-react";
+import Image from "next/image";
+import { AlertTriangle, Home, RefreshCw } from "lucide-react";
 
 export default function Error({
   error,
@@ -20,9 +21,14 @@ export default function Error({
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
       <div className="max-w-2xl w-full text-center">
         {/* Logo */}
-        <div className="flex items-center justify-center gap-2 mb-8">
-          <div className="w-12 h-12 rounded-xl bg-danger/10 border border-danger/30 flex items-center justify-center">
-            <Shield className="w-7 h-7 text-danger" />
+        <div className="flex items-center justify-center gap-3 mb-8">
+          <div className="relative w-12 h-12">
+            <Image
+              src="/logo.png"
+              alt="Cyber Ventures Indonesia"
+              fill
+              className="object-contain"
+            />
           </div>
           <div className="text-left">
             <span className="text-xl font-bold text-foreground tracking-tight block">

@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Shield } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -26,13 +27,19 @@ export default function Navigation() {
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <motion.div 
-              className="w-10 h-10 rounded-lg bg-accent-cyan/10 border border-accent-cyan/30 flex items-center justify-center group-hover:border-accent-cyan/60 transition-colors"
+          <Link href="/" className="flex items-center gap-3 group">
+            <motion.div
+              className="relative w-12 h-12"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <Shield className="w-6 h-6 text-accent-cyan" />
+              <Image
+                src="/logo.png"
+                alt="Cyber Ventures Indonesia"
+                fill
+                className="object-contain"
+                priority
+              />
             </motion.div>
             <div className="flex flex-col">
               <span className="text-lg font-bold text-foreground tracking-tight">
