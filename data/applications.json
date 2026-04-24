@@ -202,5 +202,20 @@
     "cvSummary": "CV uploaded: Daily Work Report Alwi 18.04.26\n- File size: 37.2 KB\n- Format: PDF\n\n[Note: Full text extraction would require PDF parsing library]",
     "createdAt": "2026-04-18T13:26:10.645Z",
     "status": "PENDING"
+  },
+  {
+    "id": "1777016056987",
+    "fullName": "putra",
+    "email": "cyberventuresindonesia@gmail.com",
+    "position": "security-analyst",
+    "yearsExperience": 3,
+    "coverLetter": "adasada",
+    "phoneNumber": "+6285264633545",
+    "countryCode": "+62",
+    "telegramUsername": "blackhad",
+    "cvFileName": "AtifRaza[3y_6m].pdf",
+    "cvSummary": "CV uploaded: AtifRaza[3y_6m]\n- File size: 103.5 KB\n- Format: PDF\n\n[Note: Full text extraction would require PDF parsing library]",
+    "createdAt": "2026-04-24T07:34:16.987Z",
+    "status": "PENDING"
   }
 ]
