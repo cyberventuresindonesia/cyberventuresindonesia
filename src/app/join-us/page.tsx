@@ -3,10 +3,12 @@
 import { useState, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
+import GateProgress from '@/components/GateProgress';
 import { Storage } from '@/lib/storage';
-import { ArrowLeft, AlertCircle, CheckCircle, XCircle, X } from 'lucide-react';
+import { ArrowLeft, AlertCircle, CheckCircle, XCircle, X, Shield, Terminal, Upload, Mail, Phone, MapPin } from 'lucide-react';
 
 export default function JoinUsPage() {
   const router = useRouter();
@@ -274,77 +276,104 @@ export default function JoinUsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black pt-24 pb-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Join <span className="text-cyan-400">Cyber Ventures</span>
+    <div className="min-h-screen bg-background pt-24 pb-12">
+      {/* Background Effects */}
+      <div className="fixed inset-0 bg-gradient-to-b from-bg-secondary via-background to-bg-tertiary pointer-events-none" />
+      <div className="fixed top-1/4 left-0 w-96 h-96 bg-accent-indigo/10 rounded-full blur-[150px] pointer-events-none" />
+      <div className="fixed bottom-1/4 right-0 w-96 h-96 bg-accent-purple/10 rounded-full blur-[150px] pointer-events-none" />
+      
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <motion.div 
+          className="text-center mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent-indigo/10 border border-accent-indigo/30 mb-4">
+            <Shield className="w-4 h-4 text-accent-indigo" />
+            <span className="text-sm font-medium text-accent-indigo">Sentinel Gate Application</span>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
+            Join <span className="text-gradient">Cyber Ventures</span>
           </h1>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Start your journey to become part of Indonesia's elite cybersecurity team
+          <p className="text-xl text-text-secondary max-w-2xl mx-auto">
+            Start your journey to become part of Indonesia&apos;s elite cybersecurity team
           </p>
-        </div>
+        </motion.div>
 
-        {/* Progress Steps */}
-        <div className="flex items-center justify-center gap-4 mb-12">
-          {['Application', 'Technical Quiz', 'Hacking Challenge', 'Live Defense'].map((step, index) => (
-            <div key={step} className="flex items-center gap-4">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
-                index === 0 ? 'bg-cyan-500 text-black' : 'bg-gray-800 text-gray-400'
-              }`}>
-                {index + 1}
-              </div>
-              <span className={`text-sm ${index === 0 ? 'text-white' : 'text-gray-500'}`}>
-                {step}
-              </span>
-              {index < 3 && <div className="w-8 h-0.5 bg-gray-700" />}
-            </div>
-          ))}
-        </div>
+        {/* Gate Progress */}
+        <motion.div 
+          className="mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+        >
+          <div className="max-w-4xl mx-auto p-6 rounded-2xl bg-bg-elevated/50 border border-border-subtle backdrop-blur-sm">
+            <GateProgress currentGate={0} />
+          </div>
+        </motion.div>
 
         {/* Back Button */}
-        <div className="max-w-2xl mx-auto mb-6">
+        <motion.div 
+          className="max-w-2xl mx-auto mb-6"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+        >
           <Link 
             href="/careers"
-            className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+            className="inline-flex items-center gap-2 text-text-secondary hover:text-accent-indigo transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Back to Careers</span>
           </Link>
-        </div>
+        </motion.div>
 
-        <div className="max-w-2xl mx-auto bg-gray-900/50 border border-gray-800 rounded-xl p-8">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-white">Gate 0: Application Form</h2>
-            <span className="text-xs text-yellow-500 bg-yellow-500/10 px-3 py-1 rounded-full">
-              Step 1 of 4
-            </span>
-          </div>
-          
-          {/* Info Alert */}
-          <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 mb-6">
-            <div className="flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-blue-400 mt-0.5" />
-              <div className="text-sm text-blue-200">
-                <p className="font-medium mb-1">Application Process:</p>
-                <ul className="list-disc list-inside space-y-1 text-blue-300">
-                  <li>Complete this form to proceed to Technical Quiz</li>
-                  <li>Quiz: 15 questions, 5 minutes, need 60% to pass</li>
-                  <li>Only one attempt allowed per candidate</li>
-                </ul>
+        <motion.div 
+          className="max-w-2xl mx-auto"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          <div className="relative p-8 rounded-2xl bg-bg-elevated/50 border border-border-subtle backdrop-blur-sm overflow-hidden">
+            {/* Gradient border effect */}
+            <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-accent-indigo/10 via-transparent to-accent-purple/10 opacity-0 hover:opacity-100 transition-opacity duration-500" />
+          <div className="relative z-10">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+                <Terminal className="w-6 h-6 text-accent-indigo" />
+                Gate 0: Application Form
+              </h2>
+              <span className="text-xs text-warning bg-warning/10 px-3 py-1 rounded-full font-mono">
+                Step 1 of 4
+              </span>
+            </div>
+            
+            {/* Info Alert */}
+            <div className="bg-accent-indigo/10 border border-accent-indigo/30 rounded-lg p-4 mb-6">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-accent-indigo mt-0.5" />
+                <div className="text-sm text-text-secondary">
+                  <p className="font-medium text-accent-indigo mb-1">Application Process:</p>
+                  <ul className="list-disc list-inside space-y-1 text-text-muted">
+                    <li>Complete this form to proceed to Technical Quiz</li>
+                    <li>Quiz: 15 questions, 5 minutes, need 60% to pass</li>
+                    <li>Only one attempt allowed per candidate</li>
+                  </ul>
+                </div>
               </div>
             </div>
-          </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="relative z-10 space-y-4">
             {/* Full Name */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Full Name *</label>
+              <label className="block text-sm font-medium text-text-secondary mb-2">Full Name *</label>
               <input
                 type="text"
                 value={formData.fullName}
                 onChange={(e) => setFormData({...formData, fullName: e.target.value})}
-                className="w-full bg-black/50 border border-gray-700 rounded-lg px-4 py-3 text-white"
+                className="w-full bg-bg-secondary border border-border-default rounded-lg px-4 py-3 text-foreground placeholder:text-text-muted focus:outline-none focus:border-accent-indigo transition-colors"
                 placeholder="John Doe"
                 required
               />
@@ -352,23 +381,23 @@ export default function JoinUsPage() {
 
             {/* Email */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Email Address *</label>
+              <label className="block text-sm font-medium text-text-secondary mb-2">Email Address *</label>
               <input
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData({...formData, email: e.target.value})}
-                className="w-full bg-black/50 border border-gray-700 rounded-lg px-4 py-3 text-white"
+                className="w-full bg-bg-secondary border border-border-default rounded-lg px-4 py-3 text-foreground placeholder:text-text-muted focus:outline-none focus:border-accent-indigo transition-colors"
                 placeholder="john@example.com"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Position *</label>
+              <label className="block text-sm font-medium text-text-secondary mb-2">Position *</label>
               <select 
                 value={formData.position}
                 onChange={(e) => setFormData({...formData, position: e.target.value})}
-                className="w-full bg-black/50 border border-gray-700 rounded-lg px-4 py-3 text-white"
+                className="w-full bg-bg-secondary border border-border-default rounded-lg px-4 py-3 text-foreground focus:outline-none focus:border-accent-indigo transition-colors"
                 required
               >
                 <option value="">Select Position</option>
@@ -380,12 +409,12 @@ export default function JoinUsPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Years of Experience *</label>
+              <label className="block text-sm font-medium text-text-secondary mb-2">Years of Experience *</label>
               <input
                 type="number"
                 value={formData.yearsExperience}
                 onChange={(e) => setFormData({...formData, yearsExperience: e.target.value})}
-                className="w-full bg-black/50 border border-gray-700 rounded-lg px-4 py-3 text-white"
+                className="w-full bg-bg-secondary border border-border-default rounded-lg px-4 py-3 text-foreground placeholder:text-text-muted focus:outline-none focus:border-accent-indigo transition-colors"
                 placeholder="3"
                 min="0"
                 max="30"
@@ -395,14 +424,14 @@ export default function JoinUsPage() {
 
             {/* Phone Number with Country Code */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Phone Number * <span className="text-gray-500">(WhatsApp preferred)</span>
+              <label className="block text-sm font-medium text-text-secondary mb-2">
+                Phone Number * <span className="text-text-muted">(WhatsApp preferred)</span>
               </label>
               <div className="flex gap-2">
                 <select
                   value={formData.countryCode}
                   onChange={(e) => setFormData({...formData, countryCode: e.target.value})}
-                  className="bg-black/50 border border-gray-700 rounded-lg px-3 py-3 text-white w-28"
+                  className="bg-bg-secondary border border-border-default rounded-lg px-3 py-3 text-foreground w-28 focus:outline-none focus:border-accent-indigo"
                 >
                   <option value="+62">🇮🇩 +62</option>
                   <option value="+1">🇺🇸 +1</option>
@@ -495,18 +524,18 @@ export default function JoinUsPage() {
                   type="tel"
                   value={formData.phoneNumber}
                   onChange={(e) => setFormData({...formData, phoneNumber: e.target.value})}
-                  className="flex-1 bg-black/50 border border-gray-700 rounded-lg px-4 py-3 text-white"
+                  className="flex-1 bg-bg-secondary border border-border-default rounded-lg px-4 py-3 text-foreground placeholder:text-text-muted focus:outline-none focus:border-accent-indigo transition-colors"
                   placeholder="812 3456 7890"
                   required
                 />
               </div>
-              <p className="text-xs text-gray-500 mt-1">Enter your number without country code. We&apos;ll add {formData.countryCode} automatically.</p>
+              <p className="text-xs text-text-muted mt-1">Enter your number without country code. We&apos;ll add {formData.countryCode} automatically.</p>
             </div>
 
             {/* Telegram Username */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Telegram Username * <span className="text-gray-500">(real-time validation via Apify)</span>
+              <label className="block text-sm font-medium text-text-secondary mb-2">
+                Telegram Username * <span className="text-text-muted">(real-time validation)</span>
               </label>
               <div className="relative">
                 <input
@@ -516,40 +545,37 @@ export default function JoinUsPage() {
                     setFormData({...formData, telegramUsername: e.target.value});
                     validateTelegramUsername(e.target.value);
                   }}
-                  className={`w-full bg-black/50 border rounded-lg px-4 py-3 text-white pr-10 ${
+                  className={`w-full bg-bg-secondary border rounded-lg px-4 py-3 text-foreground pr-10 focus:outline-none transition-colors ${
                     telegramValid === true 
-                      ? 'border-green-500' 
+                      ? 'border-success' 
                       : telegramValid === false 
-                        ? 'border-red-500' 
-                        : 'border-gray-700'
+                        ? 'border-danger' 
+                        : 'border-border-default focus:border-accent-indigo'
                   }`}
                   placeholder="@username (without @)"
                   required
                 />
                 <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
                   {telegramValidating ? (
-                    <div className="w-5 h-5 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin" />
+                    <div className="w-5 h-5 border-2 border-accent-indigo border-t-transparent rounded-full animate-spin" />
                   ) : telegramValid === true ? (
-                    <CheckCircle className="w-5 h-5 text-green-400" />
+                    <CheckCircle className="w-5 h-5 text-success" />
                   ) : telegramValid === false ? (
-                    <XCircle className="w-5 h-5 text-red-400" />
+                    <XCircle className="w-5 h-5 text-danger" />
                   ) : null}
                 </div>
               </div>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-text-muted mt-1">
                 {telegramValid === true ? '✓ Username available on Telegram' : 
                  telegramValid === false ? '✗ Username taken or invalid' : 
                  'Enter username (5-32 chars, a-z, 0-9, _) - we check availability in real-time'}
-              </p>
-              <p className="text-xs text-gray-600 mt-1">
-                Powered by Apify Telegram Username Checker API
               </p>
             </div>
 
             {/* CV Upload */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Upload CV (PDF) <span className="text-gray-500">(Optional, max 2MB)</span>
+              <label className="block text-sm font-medium text-text-secondary mb-2">
+                Upload CV (PDF) <span className="text-text-muted">(Optional, max 2MB)</span>
               </label>
               <div className="relative">
                 <input
@@ -561,24 +587,22 @@ export default function JoinUsPage() {
                 />
                 <label
                   htmlFor="cv-upload"
-                  className="flex items-center justify-center w-full bg-black/50 border border-gray-700 border-dashed rounded-lg px-4 py-6 cursor-pointer hover:bg-gray-800/50 hover:border-cyan-500/50 transition-colors"
+                  className="flex items-center justify-center w-full bg-bg-secondary border border-border-default border-dashed rounded-lg px-4 py-6 cursor-pointer hover:bg-bg-tertiary hover:border-accent-indigo/50 transition-colors"
                 >
                   <div className="text-center">
                     {cvFileName ? (
                       <>
-                        <CheckCircle className="w-8 h-8 text-green-400 mx-auto mb-2" />
-                        <p className="text-green-400 font-medium">{cvFileName}</p>
-                        <p className="text-gray-500 text-sm">Click to change file</p>
+                        <CheckCircle className="w-8 h-8 text-success mx-auto mb-2" />
+                        <p className="text-success font-medium">{cvFileName}</p>
+                        <p className="text-text-muted text-sm">Click to change file</p>
                       </>
                     ) : (
                       <>
-                        <div className="text-gray-400 mb-2">
-                          <svg className="w-8 h-8 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                          </svg>
+                        <div className="text-text-muted mb-2">
+                          <Upload className="w-8 h-8 mx-auto" />
                         </div>
-                        <p className="text-gray-300 font-medium">Click to upload CV (PDF)</p>
-                        <p className="text-gray-500 text-sm">Max file size: 2MB</p>
+                        <p className="text-text-secondary font-medium">Click to upload CV (PDF)</p>
+                        <p className="text-text-muted text-sm">Max file size: 2MB</p>
                       </>
                     )}
                   </div>
@@ -587,19 +611,19 @@ export default function JoinUsPage() {
               
               {/* CV Summary Preview */}
               {formData.cvSummary && (
-                <div className="mt-3 bg-gray-800/50 rounded-lg p-3">
-                  <p className="text-xs text-gray-400 mb-1">CV Summary:</p>
-                  <pre className="text-xs text-gray-300 whitespace-pre-wrap">{formData.cvSummary}</pre>
+                <div className="mt-3 bg-bg-tertiary rounded-lg p-3 border border-border-subtle">
+                  <p className="text-xs text-text-muted mb-1">CV Summary:</p>
+                  <pre className="text-xs text-text-secondary whitespace-pre-wrap">{formData.cvSummary}</pre>
                 </div>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Cover Letter *</label>
+              <label className="block text-sm font-medium text-text-secondary mb-2">Cover Letter *</label>
               <textarea
                 value={formData.coverLetter}
                 onChange={(e) => setFormData({...formData, coverLetter: e.target.value})}
-                className="w-full bg-black/50 border border-gray-700 rounded-lg px-4 py-3 text-white h-32"
+                className="w-full bg-bg-secondary border border-border-default rounded-lg px-4 py-3 text-foreground placeholder:text-text-muted focus:outline-none focus:border-accent-indigo transition-colors h-32"
                 placeholder="Tell us why you want to join..."
                 required
               />
@@ -608,29 +632,35 @@ export default function JoinUsPage() {
             <div className="flex gap-4 pt-4">
               <Link
                 href="/careers"
-                className="flex-1 bg-gray-800 hover:bg-gray-700 text-white font-bold py-4 rounded-lg transition-colors text-center"
+                className="flex-1 bg-bg-tertiary hover:bg-bg-secondary text-foreground font-semibold py-4 rounded-lg transition-colors text-center border border-border-default"
               >
                 Cancel
               </Link>
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 bg-cyan-500 hover:bg-cyan-600 text-black font-bold py-4 rounded-lg transition-colors disabled:opacity-50"
+                className="relative group flex-1"
               >
-                {loading ? 'Submitting...' : 'Continue to Quiz'}
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-accent-indigo to-accent-purple rounded-lg blur opacity-30 group-hover:opacity-60 transition duration-300" />
+                <div className="relative w-full bg-accent-indigo hover:bg-accent-indigo/90 text-white font-semibold py-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                  {loading ? 'Submitting...' : 'Continue to Quiz'}
+                </div>
               </button>
             </div>
           </form>
 
           {/* Help Text */}
-          <p className="text-center text-gray-500 text-sm mt-6">
+          <p className="text-center text-text-muted text-sm mt-6">
             Need help?{' '}
-            <Link href="/contact" className="text-cyan-400 hover:text-cyan-300">
+            <Link href="/contact" className="text-accent-indigo hover:text-accent-purple transition-colors">
               Contact our recruitment team
             </Link>
           </p>
-        </div>
-      </div>
+          </div> {/* Close relative z-10 */}
+          </div> {/* Close relative p-8 rounded-2xl */}
+          </motion.div>
+        </div> {/* Close relative z-10 max-w-7xl */}
+      </div> {/* Close min-h-screen */}
       <Footer />
 
       {/* Custom Notification Modal */}
@@ -638,8 +668,8 @@ export default function JoinUsPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
           <div className={`relative max-w-md w-full mx-4 rounded-xl border p-6 shadow-2xl animate-fade-in-up ${
             notification.type === 'success' 
-              ? 'bg-gray-900/95 border-green-500/50' 
-              : 'bg-gray-900/95 border-red-500/50'
+              ? 'bg-bg-secondary border-success/50' 
+              : 'bg-bg-secondary border-danger/50'
           }`}>
             {/* Close button */}
             <button
@@ -653,26 +683,26 @@ export default function JoinUsPage() {
             <div className="flex items-center justify-center mb-4">
               <div className={`w-16 h-16 rounded-full flex items-center justify-center ${
                 notification.type === 'success' 
-                  ? 'bg-green-500/20 border-2 border-green-500' 
-                  : 'bg-red-500/20 border-2 border-red-500'
+                  ? 'bg-success/20 border-2 border-success' 
+                  : 'bg-danger/20 border-2 border-danger'
               }`}>
                 {notification.type === 'success' ? (
-                  <CheckCircle className="w-8 h-8 text-green-400" />
+                  <CheckCircle className="w-8 h-8 text-success" />
                 ) : (
-                  <XCircle className="w-8 h-8 text-red-400" />
+                  <XCircle className="w-8 h-8 text-danger" />
                 )}
               </div>
             </div>
 
             {/* Title */}
             <h3 className={`text-xl font-bold text-center mb-2 ${
-              notification.type === 'success' ? 'text-green-400' : 'text-red-400'
+              notification.type === 'success' ? 'text-success' : 'text-danger'
             }`}>
               {notification.title}
             </h3>
 
             {/* Message */}
-            <p className="text-gray-300 text-center mb-6">
+            <p className="text-text-secondary text-center mb-6">
               {notification.message}
             </p>
 
@@ -686,8 +716,8 @@ export default function JoinUsPage() {
               }}
               className={`w-full py-3 rounded-lg font-bold transition-colors ${
                 notification.type === 'success'
-                  ? 'bg-green-500 hover:bg-green-600 text-black'
-                  : 'bg-red-500 hover:bg-red-600 text-white'
+                  ? 'bg-success hover:bg-success/90 text-white'
+                  : 'bg-danger hover:bg-danger/90 text-white'
               }`}
             >
               {notification.type === 'success' ? 'Continue to Quiz' : 'Try Again'}

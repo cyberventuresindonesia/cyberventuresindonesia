@@ -2,9 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
+import GateProgress from '@/components/GateProgress';
 import { Storage } from '@/lib/storage';
+import { Clock, AlertTriangle, CheckCircle, XCircle, Shield, Terminal, Lock, ArrowRight } from 'lucide-react';
 
 interface Question {
   id: number;
@@ -478,10 +481,10 @@ function QuizContent() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-black pt-24 pb-12 flex items-center justify-center">
+      <div className="min-h-screen bg-background pt-24 pb-12 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500 mx-auto mb-4"></div>
-          <p className="text-gray-400">Checking quiz status...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-indigo mx-auto mb-4"></div>
+          <p className="text-text-secondary">Initializing Sentinel Gate 1...</p>
         </div>
       </div>
     );
@@ -494,34 +497,51 @@ function QuizContent() {
     const passed = percentage >= 60;
 
     return (
-      <div className="min-h-screen bg-black pt-24 pb-12">
-        <div className="max-w-2xl mx-auto px-4">
-          <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-8 text-center">
-            <h2 className="text-3xl font-bold text-white mb-6">Quiz Completed!</h2>
+      <div className="min-h-screen bg-background pt-24 pb-12">
+        {/* Background Effects */}
+        <div className="fixed inset-0 bg-gradient-to-b from-bg-secondary via-background to-bg-tertiary pointer-events-none" />
+        
+        <div className="relative z-10 max-w-2xl mx-auto px-4">
+          <motion.div 
+            className="p-8 rounded-2xl bg-bg-elevated/50 border border-border-subtle backdrop-blur-sm text-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent-indigo/10 border border-accent-indigo/30 mb-6">
+              <Shield className="w-4 h-4 text-accent-indigo" />
+              <span className="text-sm font-medium text-accent-indigo">Gate 1 Complete</span>
+            </div>
+            
+            <h2 className="text-3xl font-bold text-foreground mb-6">Quiz Completed!</h2>
             
             <div className="text-6xl mb-4">{passed ? '🎉' : '😔'}</div>
             
-            <div className={`text-4xl font-bold mb-4 ${passed ? 'text-green-400' : 'text-red-400'}`}>
+            <div className={`text-4xl font-bold mb-4 ${passed ? 'text-success' : 'text-danger'}`}>
               {passed ? 'PASSED' : 'FAILED'}
             </div>
             
-            <p className="text-2xl text-white mb-2">Score: {score} / {quizQuestions.length * 20}</p>
-            <p className="text-xl text-gray-400 mb-8">({percentage}% - Need 60% to pass)</p>
+            <p className="text-2xl text-foreground mb-2 font-mono">Score: {score} / {quizQuestions.length * 20}</p>
+            <p className="text-xl text-text-secondary mb-8">({percentage}% - Need 60% to pass)</p>
 
             {passed ? (
               <button
                 onClick={navigateToChallenges}
-                className="w-full bg-cyan-500 hover:bg-cyan-600 text-black font-bold py-4 rounded-lg transition-colors"
+                className="relative group w-full"
               >
-                Continue to Gate 2: Challenges
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-accent-indigo to-accent-purple rounded-lg blur opacity-30 group-hover:opacity-60 transition duration-300" />
+                <div className="relative w-full bg-accent-indigo hover:bg-accent-indigo/90 text-white font-semibold py-4 rounded-lg transition-colors flex items-center justify-center gap-2">
+                  Continue to Gate 2: Challenges
+                  <ArrowRight className="w-5 h-5" />
+                </div>
               </button>
             ) : (
               <div className="space-y-4">
-                <p className="text-red-400">You did not pass (required: 60%)</p>
-                <p className="text-gray-400 text-sm">This quiz can only be attempted once. Contact admin for assistance.</p>
+                <p className="text-danger">You did not pass (required: 60%)</p>
+                <p className="text-text-muted text-sm">This quiz can only be attempted once. Contact admin for assistance.</p>
                 <button
                   onClick={() => router.push('/join-us')}
-                  className="w-full bg-gray-700 hover:bg-gray-600 text-white font-bold py-4 rounded-lg transition-colors"
+                  className="w-full bg-bg-tertiary hover:bg-bg-secondary text-foreground font-semibold py-4 rounded-lg transition-colors border border-border-default"
                 >
                   Back to Application
                 </button>
@@ -529,8 +549,8 @@ function QuizContent() {
             )}
             
             {/* DEV MODE: Reset Quiz for Testing - Available for both pass/fail */}
-            <div className="pt-6 mt-6 border-t border-gray-800">
-              <p className="text-xs text-gray-500 mb-2">Development Mode:</p>
+            <div className="pt-6 mt-6 border-t border-border-subtle">
+              <p className="text-xs text-text-muted mb-2">Development Mode:</p>
               <button
                 onClick={() => {
                   // Clear all quiz data
@@ -548,12 +568,12 @@ function QuizContent() {
                   // Reload page
                   window.location.reload();
                 }}
-                className="w-full bg-yellow-500/20 hover:bg-yellow-500/30 border border-yellow-500/50 text-yellow-400 text-sm font-medium py-2 rounded-lg transition-colors"
+                className="w-full bg-warning/10 hover:bg-warning/20 border border-warning/50 text-warning text-sm font-medium py-2 rounded-lg transition-colors"
               >
                 🔄 Reset Quiz (For Testing)
               </button>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     );
@@ -566,30 +586,30 @@ function QuizContent() {
       {/* Exit Confirmation Modal */}
       {showExitConfirm && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm">
-          <div className="relative max-w-md w-full mx-4 rounded-xl border-2 border-yellow-500/50 bg-gray-900 p-6 shadow-2xl shadow-yellow-500/10 animate-fade-in-up">
+          <div className="relative max-w-md w-full mx-4 rounded-xl border-2 border-warning/50 bg-bg-secondary p-6 shadow-2xl shadow-warning/10 animate-fade-in-up">
             {/* Icon */}
             <div className="flex items-center justify-center mb-4">
-              <div className="w-16 h-16 rounded-full bg-yellow-500/20 border-2 border-yellow-500 flex items-center justify-center">
-                <span className="text-3xl">⚠️</span>
+              <div className="w-16 h-16 rounded-full bg-warning/20 border-2 border-warning flex items-center justify-center">
+                <AlertTriangle className="w-8 h-8 text-warning" />
               </div>
             </div>
 
             {/* Title */}
-            <h3 className="text-xl font-bold text-center text-yellow-400 mb-2">
+            <h3 className="text-xl font-bold text-center text-warning mb-2">
               Leave Quiz?
             </h3>
 
             {/* Message */}
-            <p className="text-gray-300 text-center mb-2">
+            <p className="text-text-secondary text-center mb-2">
               You are in the middle of the Technical Quiz.
             </p>
-            <p className="text-yellow-300/80 text-center text-sm mb-6">
+            <p className="text-warning/80 text-center text-sm mb-6">
               If you leave now, your current progress will be lost and this will count as a <strong>FAILED</strong> attempt.
             </p>
 
             {/* Warning note */}
-            <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 mb-6">
-              <p className="text-red-400 text-xs text-center">
+            <div className="bg-danger/10 border border-danger/30 rounded-lg p-3 mb-6">
+              <p className="text-danger text-xs text-center">
                 🚫 You can only attempt this quiz once per application.
               </p>
             </div>
@@ -598,13 +618,13 @@ function QuizContent() {
             <div className="flex gap-3">
               <button
                 onClick={cancelExit}
-                className="flex-1 bg-cyan-500 hover:bg-cyan-600 text-black font-bold py-3 rounded-lg transition-colors"
+                className="flex-1 bg-accent-indigo hover:bg-accent-indigo/90 text-white font-bold py-3 rounded-lg transition-colors"
               >
                 Continue Quiz
               </button>
               <button
                 onClick={confirmExit}
-                className="flex-1 bg-yellow-500/20 hover:bg-yellow-500/30 border border-yellow-500 text-yellow-400 font-bold py-3 rounded-lg transition-colors"
+                className="flex-1 bg-warning/20 hover:bg-warning/30 border border-warning text-warning font-bold py-3 rounded-lg transition-colors"
               >
                 Leave & Fail
               </button>
@@ -613,98 +633,154 @@ function QuizContent() {
         </div>
       )}
 
-    <div className="min-h-screen bg-black pt-24 pb-12 select-none" style={{ userSelect: 'none', WebkitUserSelect: 'none' }}>
-      <div className="max-w-4xl mx-auto px-4">
-        <div className="flex items-center justify-between mb-8">
+    <div className="min-h-screen bg-background pt-24 pb-12 select-none" style={{ userSelect: 'none', WebkitUserSelect: 'none' }}>
+      {/* Background Effects */}
+      <div className="fixed inset-0 bg-gradient-to-b from-bg-secondary via-background to-bg-tertiary pointer-events-none" />
+      
+      <div className="relative z-10 max-w-5xl mx-auto px-4">
+        {/* Gate Progress */}
+        <div className="mb-8">
+          <div className="p-6 rounded-2xl bg-bg-elevated/50 border border-border-subtle backdrop-blur-sm">
+            <GateProgress currentGate={1} />
+          </div>
+        </div>
+
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-white">Gate 1: Technical Quiz</h1>
-            <p className="text-gray-400">Question {currentQuestion + 1} of {quizQuestions.length}</p>
+            <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+              <Terminal className="w-6 h-6 text-accent-indigo" />
+              Gate 1: Technical Quiz
+            </h1>
+            <p className="text-text-secondary">Question {currentQuestion + 1} of {quizQuestions.length}</p>
           </div>
           <div className="flex items-center gap-3">
             {/* Warning Alert - Inline with timer */}
-            {showWarning && (
-              <div className="animate-fade-in-out">
-                <div className="flex items-center gap-1.5 bg-yellow-500/20 border border-yellow-500/50 rounded-lg px-3 py-1.5 shadow-lg shadow-yellow-500/10">
-                  <span className="text-yellow-400 text-sm">⚠️</span>
-                  <span className="text-yellow-300 text-xs font-medium whitespace-nowrap">{warningMessage}</span>
-                </div>
-              </div>
-            )}
+            <AnimatePresence>
+              {showWarning && (
+                <motion.div 
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  className="flex items-center gap-1.5 bg-warning/20 border border-warning/50 rounded-lg px-3 py-1.5 shadow-lg shadow-warning/10"
+                >
+                  <AlertTriangle className="w-4 h-4 text-warning" />
+                  <span className="text-warning text-xs font-medium whitespace-nowrap">{warningMessage}</span>
+                </motion.div>
+              )}
+            </AnimatePresence>
             {/* Timer */}
-            <div className="text-right">
-              <div className={`text-2xl font-mono ${timeLeft < 60 ? 'text-red-400 animate-pulse' : 'text-cyan-400'}`}>
+            <div className={`text-right px-4 py-2 rounded-lg border ${timeLeft < 60 ? 'bg-danger/10 border-danger/50' : 'bg-bg-tertiary border-border-subtle'}`}>
+              <div className={`text-2xl font-mono flex items-center gap-2 ${timeLeft < 60 ? 'text-danger animate-pulse' : 'text-accent-indigo'}`}>
+                <Clock className="w-5 h-5" />
                 {formatTime(timeLeft)}
               </div>
-              <p className="text-xs text-gray-500">5 minutes total</p>
+              <p className="text-xs text-text-muted">5 minutes total</p>
             </div>
           </div>
         </div>
 
+        {/* Progress Bar */}
         <div className="mb-8">
-          <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-cyan-500 transition-all"
-              style={{ width: `${((currentQuestion + 1) / quizQuestions.length) * 100}%` }}
+          <div className="h-2 bg-bg-tertiary rounded-full overflow-hidden border border-border-subtle">
+            <motion.div 
+              className="h-full bg-gradient-to-r from-accent-indigo to-accent-purple"
+              initial={{ width: 0 }}
+              animate={{ width: `${((currentQuestion + 1) / quizQuestions.length) * 100}%` }}
+              transition={{ duration: 0.3 }}
             />
           </div>
-          <p className="text-sm text-gray-400 mt-2">Progress: {Math.round(((currentQuestion + 1) / quizQuestions.length) * 100)}%</p>
+          <p className="text-sm text-text-muted mt-2">Progress: {Math.round(((currentQuestion + 1) / quizQuestions.length) * 100)}%</p>
         </div>
 
-        <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-8" style={{ userSelect: 'none' }}>
-          {/* Time's Up Banner */}
-          {timeLeft <= 0 && (
-            <div className="mb-6 bg-red-500/20 border-2 border-red-500 rounded-lg p-4 text-center animate-pulse">
-              <p className="text-red-400 font-bold text-lg">⏰ TIME'S UP!</p>
-              <p className="text-red-300 text-sm">Quiz has ended. Your answers have been submitted.</p>
-            </div>
-          )}
+        {/* Question Card */}
+        <motion.div 
+          key={currentQuestion}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="relative p-8 rounded-2xl bg-bg-elevated/50 border border-border-subtle backdrop-blur-sm"
+          style={{ userSelect: 'none' }}
+        >
+          {/* Gradient border effect */}
+          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-accent-indigo/5 via-transparent to-accent-purple/5 opacity-0 hover:opacity-100 transition-opacity duration-500" />
           
-          <div className="mb-6 flex items-center justify-between">
-            <div>
-              <span className="px-3 py-1 bg-orange-500/20 rounded-full text-xs text-orange-400">
-                {question.difficulty}
-              </span>
-              <span className="px-3 py-1 bg-gray-800 rounded-full text-xs text-gray-400 ml-2">
-                {question.category}
-              </span>
+          <div className="relative z-10">
+            {/* Time's Up Banner */}
+            {timeLeft <= 0 && (
+              <div className="mb-6 bg-danger/20 border-2 border-danger rounded-lg p-4 text-center animate-pulse">
+                <p className="text-danger font-bold text-lg flex items-center justify-center gap-2">
+                  <Clock className="w-5 h-5" />
+                  TIME&apos;S UP!
+                </p>
+                <p className="text-danger/80 text-sm">Quiz has ended. Your answers have been submitted.</p>
+              </div>
+            )}
+            
+            <div className="mb-6 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="px-3 py-1 bg-warning/20 rounded-full text-xs text-warning border border-warning/30">
+                  {question.difficulty}
+                </span>
+                <span className="px-3 py-1 bg-bg-tertiary rounded-full text-xs text-text-muted border border-border-subtle">
+                  {question.category}
+                </span>
+              </div>
+              <span className="text-xs text-text-muted font-mono">Question {currentQuestion + 1}/{quizQuestions.length}</span>
             </div>
-            <span className="text-xs text-gray-500 font-mono">Question {currentQuestion + 1}/{quizQuestions.length}</span>
-          </div>
 
-          <h2 className="text-xl font-semibold text-white mb-8" style={{ userSelect: 'none', pointerEvents: 'none' }}>
-            {question.question}
-          </h2>
+            <h2 className="text-xl font-semibold text-foreground mb-8 leading-relaxed" style={{ userSelect: 'none', pointerEvents: 'none' }}>
+              {question.question}
+            </h2>
 
-          <div className="space-y-4">
-            {question.options.map((option, index) => (
-              <button
-                key={index}
-                onClick={() => handleAnswer(index)}
-                disabled={selectedAnswer !== null || timeLeft <= 0}
-                className={`w-full text-left p-4 rounded-lg border transition-all select-none
-                  ${timeLeft <= 0
-                    ? 'border-gray-800 opacity-50 cursor-not-allowed'
-                    : selectedAnswer === null 
-                      ? 'border-gray-700 hover:border-cyan-500/50 hover:bg-gray-800/50' 
-                      : selectedAnswer === index 
-                        ? index === question.correctAnswer 
-                          ? 'border-green-500 bg-green-500/20' 
-                          : 'border-red-500 bg-red-500/20'
-                        : index === question.correctAnswer && selectedAnswer !== null
-                          ? 'border-green-500 bg-green-500/20'
-                          : 'border-gray-700 opacity-50'
-                  }`}
-                style={{ userSelect: 'none' }}
-              >
-                <span className="text-gray-400 mr-3">{String.fromCharCode(65 + index)}.</span>
-                <span className="text-white">{option}</span>
-                {selectedAnswer === index && index === question.correctAnswer && (
-                  <span className="ml-2 text-green-400">Correct!</span>
-                )}
-              </button>
-            ))}
+            <div className="space-y-3">
+              {question.options.map((option, index) => (
+                <motion.button
+                  key={index}
+                  onClick={() => handleAnswer(index)}
+                  disabled={selectedAnswer !== null || timeLeft <= 0}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className={`w-full text-left p-4 rounded-xl border transition-all select-none
+                    ${timeLeft <= 0
+                      ? 'border-border-default opacity-50 cursor-not-allowed'
+                      : selectedAnswer === null 
+                        ? 'border-border-default hover:border-accent-indigo/50 hover:bg-bg-tertiary/50' 
+                        : selectedAnswer === index 
+                          ? index === question.correctAnswer 
+                            ? 'border-success bg-success/10' 
+                            : 'border-danger bg-danger/10'
+                          : index === question.correctAnswer && selectedAnswer !== null
+                            ? 'border-success bg-success/10'
+                            : 'border-border-default opacity-50'
+                    }`}
+                  style={{ userSelect: 'none' }}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-semibold border ${
+                      selectedAnswer === index
+                        ? index === question.correctAnswer
+                          ? 'bg-success text-white border-success'
+                          : 'bg-danger text-white border-danger'
+                        : selectedAnswer !== null && index === question.correctAnswer
+                          ? 'bg-success text-white border-success'
+                          : 'bg-bg-tertiary text-text-muted border-border-subtle'
+                    }`}>
+                      {String.fromCharCode(65 + index)}
+                    </span>
+                    <span className="text-foreground">{option}</span>
+                    {selectedAnswer === index && index === question.correctAnswer && (
+                      <CheckCircle className="ml-auto w-5 h-5 text-success" />
+                    )}
+                    {selectedAnswer === index && index !== question.correctAnswer && (
+                      <XCircle className="ml-auto w-5 h-5 text-danger" />
+                    )}
+                  </div>
+                </motion.button>
+              ))}
+            </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
     </>
