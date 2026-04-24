@@ -1,4 +1,7 @@
+'use client';
+
 import type { Metadata } from "next";
+import { motion } from "framer-motion";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { 
@@ -13,7 +16,9 @@ import {
   Target,
   AlertTriangle,
   FileCheck,
-  Zap
+  Zap,
+  Sparkles,
+  Award
 } from "lucide-react";
 import Link from "next/link";
 
@@ -116,20 +121,38 @@ export default function CaseStudiesPage() {
       <Navigation />
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="pt-32 pb-20 bg-gradient-to-b from-bg-secondary to-background">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center max-w-3xl mx-auto">
-              <span className="inline-block px-4 py-2 rounded-full bg-accent-cyan/10 border border-accent-cyan/30 text-accent-cyan text-sm font-medium mb-6">
+        <section className="relative pt-32 pb-20 overflow-hidden">
+          {/* Background */}
+          <div className="absolute inset-0 bg-gradient-to-b from-bg-secondary to-background" />
+          <div className="absolute inset-0 -z-10">
+            <div className="absolute top-20 left-1/4 w-96 h-96 bg-accent-indigo/20 rounded-full blur-[120px]" />
+            <div className="absolute bottom-20 right-1/4 w-96 h-96 bg-accent-purple/20 rounded-full blur-[120px]" />
+          </div>
+          
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <motion.div 
+              className="text-center max-w-3xl mx-auto"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <motion.span 
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent-indigo/10 border border-accent-indigo/30 text-accent-indigo text-sm font-medium mb-6"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.2 }}
+              >
+                <Sparkles className="w-4 h-4" />
                 Case Studies
-              </span>
+              </motion.span>
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-foreground mb-6">
-                Security Success <span className="text-gradient">Stories</span>
+                Security Success <span className="bg-gradient-to-r from-accent-indigo to-accent-purple bg-clip-text text-transparent">Stories</span>
               </h1>
               <p className="text-lg sm:text-xl text-text-secondary leading-relaxed">
-                Discover how we've helped organizations across Indonesia strengthen 
+                Discover how we&apos;ve helped organizations across Indonesia strengthen 
                 their security posture and respond to cyber threats.
               </p>
-            </div>
+            </motion.div>
           </div>
         </section>
 
@@ -152,142 +175,170 @@ export default function CaseStudiesPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="space-y-16">
               {caseStudies.map((study, index) => (
-                <article 
+                <motion.article 
                   key={index}
-                  className="p-8 md:p-12 rounded-3xl bg-bg-elevated border border-border-subtle"
+                  className="group relative p-8 md:p-12 rounded-3xl bg-bg-elevated/50 border border-border-subtle backdrop-blur-sm overflow-hidden"
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.2 }}
                 >
-                  {/* Header */}
-                  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-8">
-                    <div>
-                      <span className="inline-block px-3 py-1 rounded-full bg-accent-cyan/10 text-accent-cyan text-sm font-medium mb-3">
-                        {study.industry}
-                      </span>
-                      <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-                        {study.title}
-                      </h2>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-text-tertiary">
-                      <Clock className="w-4 h-4" />
-                      {study.duration}
-                    </div>
-                  </div>
-
-                  {/* Services Tags */}
-                  <div className="flex flex-wrap gap-2 mb-8">
-                    {study.services.map((service, sIndex) => (
-                      <span 
-                        key={sIndex}
-                        className="px-4 py-2 rounded-lg bg-bg-tertiary text-text-secondary text-sm font-medium border border-border-subtle"
-                      >
-                        {service}
-                      </span>
-                    ))}
-                  </div>
-
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                    {/* Left Column - Challenge & Solution */}
-                    <div className="space-y-8">
-                      {/* Challenge */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-accent-indigo/5 via-transparent to-accent-purple/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                  
+                  <div className="relative z-10">
+                    {/* Header */}
+                    <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-8">
                       <div>
-                        <div className="flex items-center gap-2 mb-4">
-                          <AlertTriangle className="w-5 h-5 text-warning" />
-                          <h3 className="text-lg font-bold text-foreground">The Challenge</h3>
-                        </div>
-                        <p className="text-text-secondary leading-relaxed">
-                          {study.challenge}
-                        </p>
+                        <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-indigo/10 text-accent-indigo text-sm font-medium mb-3">
+                          <Award className="w-3 h-3" />
+                          {study.industry}
+                        </span>
+                        <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+                          {study.title}
+                        </h2>
                       </div>
-
-                      {/* Solution */}
-                      <div>
-                        <div className="flex items-center gap-2 mb-4">
-                          <Zap className="w-5 h-5 text-accent-cyan" />
-                          <h3 className="text-lg font-bold text-foreground">Our Solution</h3>
-                        </div>
-                        <p className="text-text-secondary leading-relaxed">
-                          {study.solution}
-                        </p>
-                      </div>
-
-                      {/* Testimonial */}
-                      <div className="p-6 rounded-xl bg-accent-cyan/5 border border-accent-cyan/20">
-                        <blockquote className="text-text-secondary italic mb-4">
-                          "{study.testimonial.quote}"
-                        </blockquote>
-                        <div className="text-sm">
-                          <div className="font-semibold text-foreground">{study.testimonial.author}</div>
-                          <div className="text-text-tertiary">{study.testimonial.company}</div>
-                        </div>
+                      <div className="flex items-center gap-2 text-sm text-text-tertiary bg-bg-tertiary/50 px-3 py-1 rounded-full">
+                        <Clock className="w-4 h-4" />
+                        {study.duration}
                       </div>
                     </div>
 
-                    {/* Right Column - Results & Stats */}
-                    <div className="space-y-8">
-                      {/* Results */}
-                      <div>
-                        <div className="flex items-center gap-2 mb-4">
-                          <CheckCircle className="w-5 h-5 text-success" />
-                          <h3 className="text-lg font-bold text-foreground">Key Results</h3>
-                        </div>
-                        <ul className="space-y-3">
-                          {study.results.map((result, rIndex) => (
-                            <li key={rIndex} className="flex items-start gap-3">
-                              <div className="w-6 h-6 rounded-full bg-success/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                <CheckCircle className="w-4 h-4 text-success" />
-                              </div>
-                              <span className="text-text-secondary">{result}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
+                    {/* Services Tags */}
+                    <div className="flex flex-wrap gap-2 mb-8">
+                      {study.services.map((service, sIndex) => (
+                        <span 
+                          key={sIndex}
+                          className="px-4 py-2 rounded-lg bg-bg-tertiary/50 text-text-secondary text-sm font-medium border border-border-subtle"
+                        >
+                          {service}
+                        </span>
+                      ))}
+                    </div>
 
-                      {/* Stats */}
-                      <div>
-                        <h3 className="text-lg font-bold text-foreground mb-4">Impact Metrics</h3>
-                        <div className="grid grid-cols-2 gap-4">
-                          {study.stats.map((stat, stIndex) => (
-                            <div 
-                              key={stIndex}
-                              className="p-4 rounded-xl bg-bg-tertiary border border-border-subtle text-center"
-                            >
-                              <div className="text-2xl font-bold text-accent-cyan mb-1">{stat.value}</div>
-                              <div className="text-xs text-text-tertiary">{stat.label}</div>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                      {/* Left Column - Challenge & Solution */}
+                      <div className="space-y-8">
+                        {/* Challenge */}
+                        <div className="relative p-6 rounded-xl bg-danger/5 border border-danger/20">
+                          <div className="flex items-center gap-2 mb-4">
+                            <div className="w-10 h-10 rounded-lg bg-danger/10 border border-danger/30 flex items-center justify-center">
+                              <AlertTriangle className="w-5 h-5 text-danger" />
                             </div>
-                          ))}
+                            <h3 className="text-lg font-bold text-foreground">The Challenge</h3>
+                          </div>
+                          <p className="text-text-secondary leading-relaxed">
+                            {study.challenge}
+                          </p>
+                        </div>
+
+                        {/* Solution */}
+                        <div className="relative p-6 rounded-xl bg-accent-indigo/5 border border-accent-indigo/20">
+                          <div className="flex items-center gap-2 mb-4">
+                            <div className="w-10 h-10 rounded-lg bg-accent-indigo/10 border border-accent-indigo/30 flex items-center justify-center">
+                              <Zap className="w-5 h-5 text-accent-indigo" />
+                            </div>
+                            <h3 className="text-lg font-bold text-foreground">Our Solution</h3>
+                          </div>
+                          <p className="text-text-secondary leading-relaxed">
+                            {study.solution}
+                          </p>
+                        </div>
+
+                        {/* Testimonial */}
+                        <div className="p-6 rounded-xl bg-bg-tertiary/30 border border-border-subtle">
+                          <blockquote className="text-text-secondary italic mb-4">
+                            &ldquo;{study.testimonial.quote}&rdquo;
+                          </blockquote>
+                          <div className="text-sm">
+                            <div className="font-semibold text-foreground">{study.testimonial.author}</div>
+                            <div className="text-text-tertiary">{study.testimonial.company}</div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Right Column - Results & Stats */}
+                      <div className="space-y-8">
+                        {/* Results */}
+                        <div>
+                          <div className="flex items-center gap-2 mb-4">
+                            <div className="w-10 h-10 rounded-lg bg-success/10 border border-success/30 flex items-center justify-center">
+                              <CheckCircle className="w-5 h-5 text-success" />
+                            </div>
+                            <h3 className="text-lg font-bold text-foreground">Key Results</h3>
+                          </div>
+                          <ul className="space-y-3">
+                            {study.results.map((result, rIndex) => (
+                              <li key={rIndex} className="flex items-start gap-3">
+                                <div className="w-6 h-6 rounded-full bg-success/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                  <CheckCircle className="w-4 h-4 text-success" />
+                                </div>
+                                <span className="text-text-secondary">{result}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+
+                        {/* Stats */}
+                        <div>
+                          <h3 className="text-lg font-bold text-foreground mb-4">Impact Metrics</h3>
+                          <div className="grid grid-cols-2 gap-4">
+                            {study.stats.map((stat, stIndex) => (
+                              <motion.div 
+                                key={stIndex}
+                                className="p-4 rounded-xl bg-bg-tertiary/50 border border-border-subtle text-center"
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                whileInView={{ opacity: 1, scale: 1 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: stIndex * 0.1 }}
+                              >
+                                <div className="text-2xl font-bold bg-gradient-to-r from-accent-indigo to-accent-purple bg-clip-text text-transparent mb-1">{stat.value}</div>
+                                <div className="text-xs text-text-tertiary">{stat.label}</div>
+                              </motion.div>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </article>
+                </motion.article>
               ))}
             </div>
           </div>
         </section>
 
         {/* CTA Section */}
-        <section className="py-24 bg-bg-secondary">
+        <section className="py-24 bg-bg-secondary/50 border-t border-border-subtle">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-6">
-              Ready to Secure Your Organization?
-            </h2>
-            <p className="text-lg text-text-secondary mb-8">
-              Let's discuss how we can help strengthen your security posture 
-              and protect your critical assets.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link 
-                href="/contact"
-                className="px-8 py-4 bg-accent-cyan text-background font-semibold rounded-xl hover:bg-accent-cyan/90 transition-colors glow-cyan"
-              >
-                Start Your Project
-              </Link>
-              <Link 
-                href="/services"
-                className="px-8 py-4 border-2 border-accent-cyan text-accent-cyan font-semibold rounded-xl hover:bg-accent-cyan/10 transition-colors"
-              >
-                Explore Services
-              </Link>
-            </div>
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
+              <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-6">
+                Ready to Secure Your <span className="bg-gradient-to-r from-accent-indigo to-accent-purple bg-clip-text text-transparent">Organization</span>?
+              </h2>
+              <p className="text-lg text-text-secondary mb-8">
+                Let&apos;s discuss how we can help strengthen your security posture 
+                and protect your critical assets.
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <Link 
+                  href="/contact"
+                  className="relative group inline-flex items-center px-8 py-4"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-accent-indigo to-accent-purple rounded-xl blur opacity-30 group-hover:opacity-50 transition duration-300" />
+                  <div className="relative px-8 py-4 bg-accent-indigo text-white font-semibold rounded-xl hover:bg-accent-indigo/90 transition-colors">
+                    Start Your Project
+                  </div>
+                </Link>
+                <Link 
+                  href="/services"
+                  className="px-8 py-4 border-2 border-border-default text-foreground font-semibold rounded-xl hover:border-accent-indigo hover:text-accent-indigo transition-colors"
+                >
+                  Explore Services
+                </Link>
+              </div>
+            </motion.div>
           </div>
         </section>
       </main>

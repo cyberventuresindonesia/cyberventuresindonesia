@@ -1,6 +1,7 @@
-"use client";
+'use client';
 
 import { useState } from "react";
+import { motion } from "framer-motion";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { 
@@ -13,7 +14,10 @@ import {
   AlertCircle,
   Building2,
   User,
-  MessageSquare
+  MessageSquare,
+  Sparkles,
+  Shield,
+  Zap
 } from "lucide-react";
 import Link from "next/link";
 
@@ -102,20 +106,38 @@ export default function ContactPage() {
       <Navigation />
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="pt-32 pb-20 bg-gradient-to-b from-bg-secondary to-background">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center max-w-3xl mx-auto">
-              <span className="inline-block px-4 py-2 rounded-full bg-accent-cyan/10 border border-accent-cyan/30 text-accent-cyan text-sm font-medium mb-6">
+        <section className="relative pt-32 pb-20 overflow-hidden">
+          {/* Background */}
+          <div className="absolute inset-0 bg-gradient-to-b from-bg-secondary to-background" />
+          <div className="absolute inset-0 -z-10">
+            <div className="absolute top-20 left-1/4 w-96 h-96 bg-accent-indigo/20 rounded-full blur-[120px]" />
+            <div className="absolute bottom-20 right-1/4 w-96 h-96 bg-accent-purple/20 rounded-full blur-[120px]" />
+          </div>
+          
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <motion.div 
+              className="text-center max-w-3xl mx-auto"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <motion.span 
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent-indigo/10 border border-accent-indigo/30 text-accent-indigo text-sm font-medium mb-6"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.2 }}
+              >
+                <Sparkles className="w-4 h-4" />
                 Contact Us
-              </span>
+              </motion.span>
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-foreground mb-6">
-                Let's Start a <span className="text-gradient">Conversation</span>
+                Let&apos;s Start a <span className="bg-gradient-to-r from-accent-indigo to-accent-purple bg-clip-text text-transparent">Conversation</span>
               </h1>
               <p className="text-lg sm:text-xl text-text-secondary leading-relaxed">
                 Ready to secure your organization? Get in touch with our team for a 
                 free consultation and security assessment.
               </p>
-            </div>
+            </motion.div>
           </div>
         </section>
 
@@ -124,18 +146,26 @@ export default function ContactPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {contactInfo.map((info, index) => (
-                <a
+                <motion.a
                   key={index}
                   href={info.link}
-                  className="group p-6 rounded-xl bg-bg-elevated border border-border-subtle hover:border-accent-cyan/50 transition-all duration-300"
+                  className="group relative p-6 rounded-xl bg-bg-elevated/50 border border-border-subtle backdrop-blur-sm overflow-hidden"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  whileHover={{ y: -4, borderColor: 'rgba(99, 102, 241, 0.5)' }}
                 >
-                  <div className="w-12 h-12 rounded-lg bg-accent-cyan/10 flex items-center justify-center mb-4 group-hover:bg-accent-cyan/20 transition-colors">
-                    <info.icon className="w-6 h-6 text-accent-cyan" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-accent-indigo/5 via-transparent to-accent-purple/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="relative z-10">
+                    <div className="w-12 h-12 rounded-lg bg-accent-indigo/10 border border-accent-indigo/30 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                      <info.icon className="w-6 h-6 text-accent-indigo" />
+                    </div>
+                    <h3 className="font-semibold text-foreground mb-1">{info.title}</h3>
+                    <p className="text-accent-indigo font-medium mb-1">{info.value}</p>
+                    <p className="text-sm text-text-tertiary">{info.description}</p>
                   </div>
-                  <h3 className="font-semibold text-foreground mb-1">{info.title}</h3>
-                  <p className="text-accent-cyan font-medium mb-1">{info.value}</p>
-                  <p className="text-sm text-text-tertiary">{info.description}</p>
-                </a>
+                </motion.a>
               ))}
             </div>
           </div>
@@ -307,19 +337,22 @@ export default function ContactPage() {
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-accent-cyan text-background font-semibold rounded-xl hover:bg-accent-cyan/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed glow-cyan"
+                      className="relative group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {isSubmitting ? (
-                        <>
-                          <div className="w-5 h-5 border-2 border-background/30 border-t-background rounded-full animate-spin" />
-                          Sending...
-                        </>
-                      ) : (
-                        <>
-                          <Send className="w-5 h-5" />
-                          Send Message
-                        </>
-                      )}
+                      <div className="absolute inset-0 bg-gradient-to-r from-accent-indigo to-accent-purple rounded-xl blur opacity-30 group-hover:opacity-50 transition duration-300 disabled:opacity-0" />
+                      <div className="relative w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-accent-indigo text-white font-semibold rounded-xl hover:bg-accent-indigo/90 transition-all">
+                        {isSubmitting ? (
+                          <>
+                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                            Sending...
+                          </>
+                        ) : (
+                          <>
+                            <Send className="w-5 h-5" />
+                            Send Message
+                          </>
+                        )}
+                      </div>
                     </button>
                   </form>
                 )}
@@ -367,15 +400,21 @@ export default function ContactPage() {
                 </div>
 
                 {/* Emergency Banner */}
-                <div className="mt-10 p-6 rounded-2xl bg-danger/10 border border-danger/30">
-                  <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-lg bg-danger/20 flex items-center justify-center flex-shrink-0">
-                      <AlertCircle className="w-5 h-5 text-danger" />
+                <motion.div 
+                  className="mt-10 relative p-6 rounded-2xl bg-danger/5 border border-danger/30 overflow-hidden"
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-danger/10 via-transparent to-transparent" />
+                  <div className="relative z-10 flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-lg bg-danger/20 border border-danger/30 flex items-center justify-center flex-shrink-0">
+                      <Shield className="w-5 h-5 text-danger" />
                     </div>
                     <div>
                       <h3 className="font-semibold text-foreground mb-1">Security Emergency?</h3>
                       <p className="text-text-secondary text-sm mb-3">
-                        If you're experiencing a security incident, call our 24/7 hotline immediately.
+                        If you&apos;re experiencing a security incident, call our 24/7 hotline immediately.
                       </p>
                       <a 
                         href="tel:+6281234567899" 
@@ -386,23 +425,28 @@ export default function ContactPage() {
                       </a>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               </div>
             </div>
           </div>
         </section>
 
         {/* FAQ Section */}
-        <section className="py-24 bg-bg-secondary">
+        <section className="py-24 bg-bg-secondary/50 border-t border-border-subtle">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
+            <motion.div 
+              className="text-center mb-12"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
               <h2 className="text-3xl font-bold text-foreground mb-4">
-                Frequently Asked Questions
+                Frequently Asked <span className="bg-gradient-to-r from-accent-indigo to-accent-purple bg-clip-text text-transparent">Questions</span>
               </h2>
               <p className="text-text-secondary">
                 Common questions about our services and process
               </p>
-            </div>
+            </motion.div>
 
             <div className="space-y-4">
               {[
@@ -423,13 +467,24 @@ export default function ContactPage() {
                   a: "Yes, we offer Managed Security Operations Center (SOC) services with 24/7 monitoring, threat detection, and incident response for organizations that need continuous protection."
                 }
               ].map((faq, index) => (
-                <div 
+                <motion.div 
                   key={index}
-                  className="p-6 rounded-xl bg-bg-elevated border border-border-subtle"
+                  className="group relative p-6 rounded-xl bg-bg-elevated/50 border border-border-subtle backdrop-blur-sm overflow-hidden"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  whileHover={{ borderColor: 'rgba(99, 102, 241, 0.3)' }}
                 >
-                  <h3 className="font-semibold text-foreground mb-2">{faq.q}</h3>
-                  <p className="text-text-secondary text-sm leading-relaxed">{faq.a}</p>
-                </div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-accent-indigo/5 via-transparent to-accent-purple/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="relative z-10">
+                    <h3 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+                      <Zap className="w-4 h-4 text-accent-indigo" />
+                      {faq.q}
+                    </h3>
+                    <p className="text-text-secondary text-sm leading-relaxed">{faq.a}</p>
+                  </div>
+                </motion.div>
               ))}
             </div>
           </div>
