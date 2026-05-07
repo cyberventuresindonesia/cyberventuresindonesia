@@ -28,6 +28,7 @@ export default function Error({
               alt="Cyber Ventures Indonesia"
               fill
               className="object-contain"
+              sizes="48px"
             />
           </div>
           <div className="text-left">

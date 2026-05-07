@@ -98,6 +98,23 @@ export const LocalStorage = {
     localStorage.removeItem('currentUser');
     // Keep challenge progress per user
   },
+
+  // General purpose get/set (for gate progress, flags, etc.)
+  get(key: string) {
+    if (typeof window === 'undefined') return null;
+    const saved = localStorage.getItem(key);
+    return saved;
+  },
+
+  set(key: string, value: string) {
+    if (typeof window === 'undefined') return;
+    localStorage.setItem(key, value);
+  },
+
+  remove(key: string) {
+    if (typeof window === 'undefined') return;
+    localStorage.removeItem(key);
+  },
 };
 
 // ==========================================
@@ -304,5 +321,18 @@ export const Storage = {
 
   getLiveDefenseSchedule() {
     return LocalStorage.getLiveDefenseSchedule();
+  },
+
+  // General purpose storage methods (proxy to LocalStorage)
+  get(key: string) {
+    return LocalStorage.get(key);
+  },
+
+  set(key: string, value: string) {
+    return LocalStorage.set(key, value);
+  },
+
+  remove(key: string) {
+    return LocalStorage.remove(key);
   },
 };

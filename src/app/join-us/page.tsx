@@ -256,16 +256,41 @@ export default function JoinUsPage() {
       // Clear any previous quiz session to force fresh start
       localStorage.removeItem('quizSessionId');
       
+      // Save candidate data for gate progress tracking
+      localStorage.setItem('candidateData', JSON.stringify({
+        email: formData.email,
+        fullName: formData.fullName,
+        position: formData.position,
+      }));
+      
+      // Send application received email
+      try {
+        await fetch('/api/email/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            to: formData.email,
+            template: 'application_received',
+            variables: {
+              name: formData.fullName,
+              position: formData.position,
+            }
+          })
+        });
+      } catch (emailError) {
+        console.error('Failed to send welcome email:', emailError);
+      }
+      
       // Show success notification
       showNotification(
         'success', 
         'Application Submitted!', 
-        `Your application has been saved to ${result.source || 'local storage'}. Proceeding to Technical Quiz...`
+        `Your application has been received. Check your email and proceed to Gate 1...`
       );
       
-      // Navigate to quiz after delay
+      // Navigate to Gate 1 after delay
       setTimeout(() => {
-        router.push('/join-us/quiz');
+        router.push('/join-us/gate-1');
       }, 2500);
     } catch (error) {
       console.error('Error saving application:', error);
@@ -276,6 +301,7 @@ export default function JoinUsPage() {
   };
 
   return (
+    <>
     <div className="min-h-screen bg-background pt-24 pb-12">
       {/* Background Effects */}
       <div className="fixed inset-0 bg-gradient-to-b from-bg-secondary via-background to-bg-tertiary pointer-events-none" />
@@ -656,11 +682,11 @@ export default function JoinUsPage() {
               Contact our recruitment team
             </Link>
           </p>
-          </div> {/* Close relative z-10 */}
-          </div> {/* Close relative p-8 rounded-2xl */}
+          </div>
+          </div>
           </motion.div>
-        </div> {/* Close relative z-10 max-w-7xl */}
-      </div> {/* Close min-h-screen */}
+        </div>
+      </div>
       <Footer />
 
       {/* Custom Notification Modal */}
@@ -725,6 +751,6 @@ export default function JoinUsPage() {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }

@@ -34,16 +34,16 @@ const footerLinks = {
     { label: "Case Studies", href: "/case-studies" },
   ],
   resources: [
-    { label: "Documentation", href: "#" },
-    { label: "Threat Intelligence", href: "#" },
+    { label: "Documentation", href: "/docs" },
+    { label: "Threat Intelligence", href: "/blog?category=threat-intelligence" },
     { label: "Security Blog", href: "/blog" },
-    { label: "API Reference", href: "#" },
+    { label: "API Reference", href: "/api-reference" },
   ],
   legal: [
     { label: "Privacy Policy", href: "/privacy" },
     { label: "Terms of Service", href: "/terms" },
-    { label: "Cookie Policy", href: "#" },
-    { label: "Security", href: "#" },
+    { label: "Cookie Policy", href: "/cookie-policy" },
+    { label: "Security", href: "/security" },
   ],
 };
 
@@ -106,6 +106,7 @@ export default function Footer() {
                   alt="Cyber Ventures Indonesia"
                   fill
                   className="object-contain"
+                  sizes="48px"
                 />
               </div>
               <div className="flex flex-col">
@@ -168,8 +169,8 @@ export default function Footer() {
               Products
             </h4>
             <ul className="space-y-3">
-              {footerLinks.products.map((link) => (
-                <li key={link.href}>
+              {footerLinks.products.map((link, index) => (
+                <li key={`products-${index}-${link.label}`}>
                   <Link 
                     href={link.href}
                     className="group flex items-center gap-1 text-sm text-text-secondary hover:text-accent-indigo transition-colors"
@@ -188,8 +189,8 @@ export default function Footer() {
               Company
             </h4>
             <ul className="space-y-3">
-              {footerLinks.company.map((link) => (
-                <li key={link.href}>
+              {footerLinks.company.map((link, index) => (
+                <li key={`company-${index}-${link.label}`}>
                   <Link 
                     href={link.href}
                     className="group flex items-center gap-1 text-sm text-text-secondary hover:text-accent-indigo transition-colors"
@@ -208,8 +209,8 @@ export default function Footer() {
               Resources
             </h4>
             <ul className="space-y-3">
-              {footerLinks.resources.map((link) => (
-                <li key={link.href}>
+              {footerLinks.resources.map((link, index) => (
+                <li key={`resources-${index}-${link.label}`}>
                   <Link 
                     href={link.href}
                     className="group flex items-center gap-1 text-sm text-text-secondary hover:text-accent-indigo transition-colors"
@@ -228,8 +229,8 @@ export default function Footer() {
               Legal
             </h4>
             <ul className="space-y-3">
-              {footerLinks.legal.map((link) => (
-                <li key={link.href}>
+              {footerLinks.legal.map((link, index) => (
+                <li key={`legal-${index}-${link.label}`}>
                   <Link 
                     href={link.href}
                     className="group flex items-center gap-1 text-sm text-text-secondary hover:text-accent-indigo transition-colors"

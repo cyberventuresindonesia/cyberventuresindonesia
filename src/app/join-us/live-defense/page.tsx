@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { Storage } from '@/lib/storage';
-import { sendEmail, generateCalendarInvite } from '@/lib/email';
+import { motion } from 'framer-motion';
 import { ArrowLeft, Calendar, Clock, Video, CheckCircle, Download, Home, User, CalendarPlus, Mail, Shield, ChevronRight } from 'lucide-react';
 
 export default function LiveDefensePage() {
@@ -69,6 +69,8 @@ END:VEVENT
 END:VCALENDAR`;
   };
 
+  const [scheduling, setScheduling] = useState(false);
+
   const handleSchedule = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -77,37 +79,41 @@ END:VCALENDAR`;
       return;
     }
     
+    setScheduling(true);
+    
     try {
-      // Save to storage
-      const result = await Storage.saveLiveDefenseSchedule({
-        ...formData,
-        scheduled: true,
-        candidateInfo,
+      // Call API to schedule
+      const response = await fetch('/api/live-defense/schedule', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          candidateEmail: candidateInfo.email,
+          candidateName: candidateInfo.fullName,
+          position: candidateInfo.position,
+          preferredDate: formData.preferredDate,
+          preferredTime: formData.preferredTime,
+          timezone: formData.timezone,
+          notes: formData.notes,
+        }),
       });
+      
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to schedule');
+      }
       
       console.log('Live defense scheduled:', result);
       
-      // Send automated email
-      const googleMeetLink = 'https://meet.google.com/cyber-ventures-live'; // Static or generated
-      
-      const emailResult = await sendEmail({
-        to: candidateInfo.email,
-        candidateName: candidateInfo.fullName,
-        position: candidateInfo.position,
-        date: formData.preferredDate,
-        time: formData.preferredTime,
-        timezone: formData.timezone,
-        telegramUsername: candidateInfo.telegramUsername,
-        googleMeetLink,
+      // Save to storage
+      await Storage.saveLiveDefenseSchedule({
+        ...formData,
+        scheduled: true,
+        candidateInfo,
+        meetLink: result.session?.meetLink,
       });
       
-      if (emailResult.success) {
-        setEmailSent(true);
-        console.log('✅ Confirmation email queued:', emailResult.message);
-      } else {
-        console.error('⚠️ Email could not be sent:', emailResult.message);
-      }
-      
+      setEmailSent(true);
       setScheduled(true);
       localStorage.setItem('currentGate', '4');
       localStorage.setItem('liveDefenseScheduled', 'true');
@@ -115,6 +121,8 @@ END:VCALENDAR`;
     } catch (error) {
       console.error('Error scheduling:', error);
       alert('❌ Error scheduling. Please try again.');
+    } finally {
+      setScheduling(false);
     }
   };
 
@@ -404,9 +412,17 @@ END:VCALENDAR`;
 
               <button
                 type="submit"
-                className="w-full bg-cyan-500 hover:bg-cyan-600 text-black font-bold py-4 rounded-lg transition-colors"
+                disabled={scheduling}
+                className="w-full bg-cyan-500 hover:bg-cyan-600 disabled:bg-cyan-500/50 text-black font-bold py-4 rounded-lg transition-colors flex items-center justify-center gap-2"
               >
-                Schedule Live Defense Session
+                {scheduling ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                    Scheduling...
+                  </>
+                ) : (
+                  'Schedule Live Defense Session'
+                )}
               </button>
             </form>
           </div>

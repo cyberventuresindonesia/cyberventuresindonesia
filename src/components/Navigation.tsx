@@ -45,6 +45,7 @@ export default function Navigation() {
                 fill
                 className="object-contain"
                 priority
+                sizes="48px"
               />
             </motion.div>
             <div className="flex flex-col">

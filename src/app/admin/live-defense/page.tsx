@@ -1,7 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
+import { RefreshCw, Loader2, Calendar, Clock, CheckCircle } from 'lucide-react';
 
 interface LiveDefenseSession {
   id: string;
@@ -16,11 +18,9 @@ interface LiveDefenseSession {
 }
 
 export default function LiveDefensePage() {
-  const [sessions, setSessions] = useState<LiveDefenseSession[]>([
-    { id: '1', candidateName: 'Sarah Code', candidateEmail: 'sarah@example.com', scheduledAt: '2024-01-20T10:00', duration: 60, status: 'SCHEDULED' },
-    { id: '2', candidateName: 'Mike Pwn', candidateEmail: 'mike@example.com', scheduledAt: '2024-01-19T14:00', duration: 60, status: 'COMPLETED', overallScore: 85, evaluator: 'Admin User' },
-    { id: '3', candidateName: 'Alex Cyber', candidateEmail: 'alex@example.com', scheduledAt: '2024-01-18T09:00', duration: 60, status: 'COMPLETED', overallScore: 92, evaluator: 'Admin User' },
-  ]);
+  const [sessions, setSessions] = useState<LiveDefenseSession[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   const [selectedSession, setSelectedSession] = useState<LiveDefenseSession | null>(null);
   const [evaluation, setEvaluation] = useState({
@@ -32,6 +32,42 @@ export default function LiveDefensePage() {
     recommendation: 'CONSIDER'
   });
 
+  // Fetch sessions from API
+  const fetchSessions = async () => {
+    try {
+      const response = await fetch('/api/live-defense/sessions');
+      const data = await response.json();
+      if (data.success) {
+        setSessions(data.sessions.map((s: any) => ({
+          id: s.id,
+          candidateName: s.candidateName,
+          candidateEmail: s.candidateEmail,
+          scheduledAt: `${s.preferredDate}T${s.preferredTime}`,
+          duration: 60,
+          status: s.status,
+          overallScore: s.evaluation?.overall,
+          evaluator: s.evaluation?.evaluator,
+        })));
+      }
+    } catch (error) {
+      console.error('Failed to fetch sessions:', error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchSessions();
+    const interval = setInterval(fetchSessions, 30000); // Refresh every 30s
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    fetchSessions();
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'SCHEDULED': return 'bg-blue-500/20 text-blue-400';
@@ -42,23 +78,63 @@ export default function LiveDefensePage() {
     }
   };
 
-  const handleEvaluate = () => {
+  const handleEvaluate = async () => {
     if (!selectedSession) return;
     
     const overall = Math.round((evaluation.threatDetection + evaluation.responseTime + evaluation.documentation + evaluation.communication) / 4);
     
-    setSessions(sessions.map(s => 
-      s.id === selectedSession.id 
-        ? { ...s, status: 'COMPLETED' as const, overallScore: overall, evaluator: 'Admin User' }
-        : s
-    ));
-    
-    setSelectedSession(null);
-    alert('Evaluation submitted successfully!');
+    try {
+      const response = await fetch('/api/live-defense/sessions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sessionId: selectedSession.id,
+          status: 'COMPLETED',
+          evaluation: {
+            threatDetection: evaluation.threatDetection,
+            responseTime: evaluation.responseTime,
+            documentation: evaluation.documentation,
+            communication: evaluation.communication,
+            notes: evaluation.notes,
+            recommendation: evaluation.recommendation,
+            overall,
+            evaluator: 'Admin User',
+          }
+        }),
+      });
+      
+      if (response.ok) {
+        // Update local state
+        setSessions(sessions.map(s => 
+          s.id === selectedSession.id 
+            ? { ...s, status: 'COMPLETED' as const, overallScore: overall, evaluator: 'Admin User' }
+            : s
+        ));
+        
+        setSelectedSession(null);
+        alert('Evaluation submitted successfully!');
+      } else {
+        alert('Failed to submit evaluation');
+      }
+    } catch (error) {
+      console.error('Evaluation error:', error);
+      alert('Error submitting evaluation');
+    }
   };
 
   const upcomingSessions = sessions.filter(s => s.status === 'SCHEDULED').length;
   const completedToday = sessions.filter(s => s.status === 'COMPLETED').length;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen pt-24 pb-16 flex items-center justify-center">
+        <div className="flex items-center gap-3">
+          <Loader2 className="w-6 h-6 animate-spin text-accent-cyan" />
+          <span className="text-text-muted">Loading sessions...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -67,11 +143,21 @@ export default function LiveDefensePage() {
           <h1 className="text-3xl font-bold text-white">Live Defense Management</h1>
           <p className="text-gray-400 mt-1">Schedule and evaluate live incident response sessions</p>
         </div>
-        <Link href="/admin/recruitment">
-          <button className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg">
-            ← Back to Dashboard
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleRefresh}
+            disabled={refreshing}
+            className="bg-gray-700 hover:bg-gray-600 disabled:opacity-50 text-white font-bold py-3 px-6 rounded-lg flex items-center gap-2"
+          >
+            <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+            {refreshing ? 'Refreshing...' : 'Refresh'}
           </button>
-        </Link>
+          <Link href="/admin/recruitment">
+            <button className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg">
+              ← Back
+            </button>
+          </Link>
+        </div>
       </div>
 
       {/* Stats */}

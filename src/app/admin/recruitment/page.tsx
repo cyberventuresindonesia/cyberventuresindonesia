@@ -554,7 +554,7 @@ export default function RecruitmentDashboard() {
                           </div>
                           <span className="text-xs text-text-muted font-mono">Gate {candidate.gate}/4</span>
                         </div>
-                        {candidate.quizScore > 0 && (
+                        {candidate.quizScore && candidate.quizScore > 0 && (
                           <div className="text-xs text-text-muted mt-1">
                             Quiz: <span className={candidate.quizScore >= 60 ? 'text-success' : 'text-danger'}>{candidate.quizScore}%</span>
                           </div>

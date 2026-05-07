@@ -16,6 +16,7 @@ export default function NotFound() {
               alt="Cyber Ventures Indonesia"
               fill
               className="object-contain"
+              sizes="48px"
             />
           </div>
           <div className="text-left">

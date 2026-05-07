@@ -1,3 +1,6 @@
+import { Metadata } from 'next';
+import Image from 'next/image';
+
 export const metadata = {
   title: 'Admin Dashboard | Cyber Ventures',
   description: 'Recruitment management dashboard',
@@ -14,8 +17,14 @@ export default function AdminLayout({
       <aside className="w-64 bg-gray-900 border-r border-gray-800 flex flex-col">
         <div className="p-6 border-b border-gray-800">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-cyan-500 rounded-lg flex items-center justify-center text-black font-bold">
-              CV
+            <div className="relative w-10 h-10">
+              <Image
+                src="/logo.png"
+                alt="Cyber Ventures"
+                fill
+                className="object-contain"
+                sizes="40px"
+              />
             </div>
             <div>
               <h1 className="text-white font-bold">Admin Portal</h1>

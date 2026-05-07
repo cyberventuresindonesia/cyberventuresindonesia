@@ -85,20 +85,35 @@ export default function ContactPage() {
     setIsSubmitting(true);
     setError("");
 
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
 
-    // For now, just show success (will integrate with Hostinger API later)
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-    setFormData({
-      name: "",
-      email: "",
-      company: "",
-      phone: "",
-      service: "",
-      message: ""
-    });
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to submit form');
+      }
+
+      setIsSubmitting(false);
+      setIsSubmitted(true);
+      setFormData({
+        name: "",
+        email: "",
+        company: "",
+        phone: "",
+        service: "",
+        message: ""
+      });
+    } catch (err) {
+      setIsSubmitting(false);
+      setError(err instanceof Error ? err.message : 'Failed to submit form. Please try again.');
+    }
   };
 
   return (

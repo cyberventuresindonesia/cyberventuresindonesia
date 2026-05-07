@@ -1,4 +1,6 @@
-import type { Metadata } from "next";
+'use client';
+
+import { useState } from "react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { 
@@ -13,21 +15,18 @@ import {
   Server,
   Globe,
   Zap,
-  Eye
+  Eye,
+  Loader2,
+  CheckCircle
 } from "lucide-react";
 import Link from "next/link";
-
-export const metadata: Metadata = {
-  title: "Cyber Reports & Insights",
-  description: "Latest cybersecurity reports, threat intelligence, and security insights from Cyber Ventures Indonesia's expert team.",
-};
 
 const categories = [
   { name: "All", count: 12 },
   { name: "Threat Intelligence", count: 5 },
   { name: "Vulnerability Alerts", count: 3 },
   { name: "Industry Insights", count: 2 },
-  { name: "Best Practices", count: 2 },
+  { name: "Best Practices", count: 4 },
 ];
 
 const featuredReport = {
@@ -96,6 +95,63 @@ const reports = [
     readTime: "20 min read",
     icon: Shield,
     tags: ["Zero Trust", "Architecture", "Guide"]
+  },
+  {
+    title: "Ransomware Evolution: New Tactics Observed in Q4 2024",
+    excerpt: "Analysis of emerging ransomware techniques including double extortion, triple extortion, and data leak site monitoring strategies.",
+    category: "Threat Intelligence",
+    date: "November 1, 2024",
+    readTime: "15 min read",
+    icon: AlertTriangle,
+    tags: ["Ransomware", "Extortion", "Q4"],
+    severity: "High"
+  },
+  {
+    title: "Securing Remote Workforce: Post-Pandemic Security Framework",
+    excerpt: "Comprehensive security framework for organizations with distributed teams, including VPN, Zero Trust Network Access, and endpoint protection.",
+    category: "Best Practices",
+    date: "October 25, 2024",
+    readTime: "18 min read",
+    icon: Shield,
+    tags: ["Remote Work", "VPN", "ZTNA"]
+  },
+  {
+    title: "Critical Infrastructure Cyber Attacks: Indonesia Power Grid Analysis",
+    excerpt: "In-depth analysis of recent cyber attacks targeting Indonesian critical infrastructure and recommendations for OT security.",
+    category: "Threat Intelligence",
+    date: "October 18, 2024",
+    readTime: "14 min read",
+    icon: Lock,
+    tags: ["Critical Infrastructure", "OT", "ICS"],
+    severity: "Critical"
+  },
+  {
+    title: "DevSecOps Implementation Guide for Indonesian Tech Companies",
+    excerpt: "Practical guide to integrating security into CI/CD pipelines, including tool recommendations and process workflows.",
+    category: "Industry Insights",
+    date: "October 12, 2024",
+    readTime: "22 min read",
+    icon: FileText,
+    tags: ["DevSecOps", "CI/CD", "Automation"]
+  },
+  {
+    title: "New Phishing Campaign Targeting E-Commerce Platforms",
+    excerpt: "Detailed analysis of sophisticated phishing attacks targeting Indonesian e-commerce platforms and consumer protection strategies.",
+    category: "Threat Intelligence",
+    date: "October 5, 2024",
+    readTime: "8 min read",
+    icon: AlertTriangle,
+    tags: ["Phishing", "E-Commerce", "Social Engineering"],
+    severity: "High"
+  },
+  {
+    title: "Container Security: Kubernetes Best Practices",
+    excerpt: "Essential security configurations for Kubernetes deployments, including pod security, network policies, and runtime protection.",
+    category: "Best Practices",
+    date: "September 28, 2024",
+    readTime: "16 min read",
+    icon: Server,
+    tags: ["Kubernetes", "Containers", "DevOps"]
   }
 ];
 
@@ -107,6 +163,62 @@ const threatStats = [
 ];
 
 export default function BlogPage() {
+  const [visibleReports, setVisibleReports] = useState(6);
+  const [subscribeEmail, setSubscribeEmail] = useState('');
+  const [subscribeStatus, setSubscribeStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [selectedCategory, setSelectedCategory] = useState('All');
+
+  const handleLoadMore = () => {
+    setVisibleReports(prev => Math.min(prev + 6, reports.length));
+  };
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!subscribeEmail) return;
+    
+    setSubscribeStatus('loading');
+    
+    try {
+      const response = await fetch('/api/newsletter/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: subscribeEmail }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to subscribe');
+      }
+
+      setSubscribeStatus('success');
+      setSubscribeEmail('');
+      
+      // Reset after 3 seconds
+      setTimeout(() => setSubscribeStatus('idle'), 3000);
+    } catch (err) {
+      setSubscribeStatus('idle');
+      alert(err instanceof Error ? err.message : 'Failed to subscribe. Please try again.');
+    }
+  };
+
+  const displayedReports = reports.slice(0, visibleReports);
+  const hasMoreReports = visibleReports < reports.length;
+
+  const filteredReports = selectedCategory === 'All' 
+    ? reports 
+    : reports.filter(report => report.category === selectedCategory);
+  
+  const displayedFilteredReports = filteredReports.slice(0, visibleReports);
+  const hasMoreFilteredReports = visibleReports < filteredReports.length;
+
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
+    setVisibleReports(6); // Reset visible count when category changes
+  };
+
   return (
     <>
       <Navigation />
@@ -152,8 +264,9 @@ export default function BlogPage() {
               {categories.map((category, index) => (
                 <button
                   key={index}
+                  onClick={() => handleCategoryChange(category.name)}
                   className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                    index === 0 
+                    selectedCategory === category.name
                       ? 'bg-accent-cyan text-background' 
                       : 'bg-bg-elevated text-text-secondary hover:text-accent-cyan border border-border-subtle'
                   }`}
@@ -223,7 +336,7 @@ export default function BlogPage() {
             <h2 className="text-2xl font-bold text-foreground mb-8">Latest Reports</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {reports.map((report, index) => (
+              {displayedFilteredReports.map((report, index) => (
                 <article 
                   key={index}
                   className="group p-6 rounded-2xl bg-bg-elevated border border-border-subtle hover:border-accent-cyan/50 transition-all duration-300 flex flex-col"
@@ -289,11 +402,16 @@ export default function BlogPage() {
             </div>
 
             {/* Load More */}
-            <div className="text-center mt-12">
-              <button className="px-8 py-4 border-2 border-accent-cyan text-accent-cyan font-semibold rounded-xl hover:bg-accent-cyan/10 transition-colors">
-                Load More Reports
-              </button>
-            </div>
+            {hasMoreFilteredReports && (
+              <div className="text-center mt-12">
+                <button 
+                  onClick={handleLoadMore}
+                  className="px-8 py-4 border-2 border-accent-cyan text-accent-cyan font-semibold rounded-xl hover:bg-accent-cyan/10 transition-colors"
+                >
+                  Load More Reports ({filteredReports.length - visibleReports} remaining)
+                </button>
+              </div>
+            )}
           </div>
         </section>
 
@@ -310,19 +428,38 @@ export default function BlogPage() {
               Get instant notifications for critical vulnerabilities, emerging threats, 
               and security advisories directly to your inbox.
             </p>
-            <form className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 px-4 py-3 bg-bg-elevated border border-border-default rounded-xl text-foreground placeholder-text-muted focus:border-accent-cyan focus:outline-none"
-              />
-              <button 
-                type="submit"
-                className="px-6 py-3 bg-accent-cyan text-background font-semibold rounded-xl hover:bg-accent-cyan/90 transition-colors"
-              >
-                Subscribe
-              </button>
-            </form>
+            
+            {subscribeStatus === 'success' ? (
+              <div className="flex items-center justify-center gap-2 text-success">
+                <CheckCircle className="w-6 h-6" />
+                <span className="font-semibold">Successfully subscribed! Check your email for confirmation.</span>
+              </div>
+            ) : (
+              <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto">
+                <input
+                  type="email"
+                  value={subscribeEmail}
+                  onChange={(e) => setSubscribeEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  required
+                  className="flex-1 px-4 py-3 bg-bg-elevated border border-border-default rounded-xl text-foreground placeholder-text-muted focus:border-accent-cyan focus:outline-none"
+                />
+                <button 
+                  type="submit"
+                  disabled={subscribeStatus === 'loading'}
+                  className="px-6 py-3 bg-accent-cyan text-background font-semibold rounded-xl hover:bg-accent-cyan/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                >
+                  {subscribeStatus === 'loading' ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Subscribing...
+                    </>
+                  ) : (
+                    'Subscribe'
+                  )}
+                </button>
+              </form>
+            )}
             <p className="text-xs text-text-muted mt-4">
               We respect your privacy. Unsubscribe at any time.
             </p>
